@@ -8,7 +8,7 @@ def chat_with_gpt(prompt):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
-        max_tokens=4095,
+        max_tokens=4000,
         n=1,
         stop=None,
         temperature=0.5,
@@ -21,7 +21,7 @@ def main():
         sys.exit(1)
 
     code_snippet = sys.argv[1]
-    prompt = f"Debug the following Python code snippet: ```python\n{code_snippet}\n```\n"
+    prompt = f"```python\n{code_snippet}\n```\n"
     debug_output = chat_with_gpt(prompt)
     print(f"Debug output:\n{debug_output}")
 
