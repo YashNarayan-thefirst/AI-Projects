@@ -1,35 +1,29 @@
-from flask import Flask, request
 import openai
+import sys
 
-openai.api_key = "Your Key"
+# Replace 'your_api_key' with your actual API key
+openai.api_key = "your_api_key"
 
-app = Flask(__name__)
+def chat_with_gpt(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=4095,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    return response.choices[0].text.strip()
 
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python code_debugger.py <code_snippet>")
+        sys.exit(1)
 
-@app.route('/debug', methods=['POST'])
-def debug():
-    code = request.form.get('code')
+    code_snippet = sys.argv[1]
+    prompt = f"Debug the following Python code snippet: ```python\n{code_snippet}\n```\n"
+    debug_output = chat_with_gpt(prompt)
+    print(f"Debug output:\n{debug_output}")
 
-    if not code:
-        return "Error: Code not found in request"
-
-    prompt = f"Debug the following code: \n\n{code}\n\nThe debugged code is:"
-    try:
-        response = openai.Completion.create(
-            engine="davinci-codex",
-            prompt=prompt,
-            temperature=0.5,
-            max_tokens=100,
-            n=1,
-            stop=None
-        )
-    except Exception as e:
-        return f"Error: {e}"
-
-    debugged_code = response.choices[0].text.strip()
-
-    return debugged_code
-
-
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    main()
